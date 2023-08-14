@@ -6,7 +6,6 @@
 package com.github.angelmunoz.services
 
 import com.github.angelmunoz.types.IFileSystem
-import com.github.angelmunoz.types.ILogger
 import java.io.File
 
 
@@ -23,18 +22,6 @@ fun localFsFactory(): IFileSystem {
                 return file.walkTopDown().map { item -> item.absolutePath }.toList()
             }
             return listOf()
-        }
-    }
-}
-
-fun simpleLoggerFactory(): ILogger {
-    return object : ILogger {
-        override fun println(message: String) {
-            kotlin.io.println(message)
-        }
-
-        override fun printError(message: String) {
-            kotlin.io.println(message)
         }
     }
 }

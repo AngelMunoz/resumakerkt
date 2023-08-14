@@ -38,15 +38,10 @@ class ShowDirectoryItems(private val env: ApplicationEnvironment, private val ac
     var recursive = false
 
     override fun run() {
-        // although we're not doing any async work here
-        // this should work fine for cases where we do
+        val logger = env.getLogger(this.javaClass)
         runBlocking {
             val items = action(env.fileSystem, ShowParams(path, recursive))
-            // To ease testing we'd like to separate our command in transformation stages
-            // this way we will be able to test each stage independently
-            // example: val transformedItems = transformItems(env.anotherService, items)
-            // performFinalWork(transformedItems)
-            for (item in items) env.logger.println(item)
+            for (item in items) logger.info { item }
         }
     }
 }

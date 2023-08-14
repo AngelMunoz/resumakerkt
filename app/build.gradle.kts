@@ -30,14 +30,28 @@ dependencies {
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
-
     // added by me
 
+    // Coroutines because why not?
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
+    // CLI Framework Bits
     implementation("info.picocli:picocli:4.7.4")
     annotationProcessor("info.picocli:picocli-codegen:4.7.4")
     kapt("info.picocli:picocli-codegen:4.7.4")
+
+    // HTML parsing
+    implementation("org.jsoup:jsoup:1.16.1")
+
+    // HTML to PDF
+    val ohpVersion = "1.0.10"
+    implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:$ohpVersion")
+    implementation("com.openhtmltopdf:openhtmltopdf-core:$ohpVersion")
+
+    // logging stuff
+    implementation("ch.qos.logback:logback-classic:1.4.11")
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
+
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
