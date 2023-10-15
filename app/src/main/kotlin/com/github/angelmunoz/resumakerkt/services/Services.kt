@@ -12,6 +12,7 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import io.pebbletemplates.pebble.PebbleEngine
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
 import org.jsoup.Jsoup
 import org.jsoup.helper.W3CDom
@@ -19,6 +20,7 @@ import org.w3c.dom.Document
 import java.io.File
 import java.io.OutputStream
 import java.io.StringWriter
+import kotlin.io.path.Path
 import kotlin.io.path.toPath
 
 
@@ -26,7 +28,9 @@ fun getTemplateRenderer(engine: PebbleEngine, json: Json): TemplateRenderer {
     return TemplateRenderer { templateNameOrPath, resume ->
         StringWriter().use { writer ->
             val template = engine.getTemplate("templates/$templateNameOrPath")
-            val payload = json.encodeToString(resume).let { json.parseToJsonElement(it).jsonObject.toMap() }
+
+            val payload = json.encodeToJsonElement(resume).jsonObject.toMap()
+
             template.evaluate(writer, payload)
             writer.toString()
         }
