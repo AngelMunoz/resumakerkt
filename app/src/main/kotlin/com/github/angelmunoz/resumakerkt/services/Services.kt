@@ -35,14 +35,8 @@ fun getTemplateRenderer(engine: PebbleEngine, json: Json): TemplateRenderer {
 
 inline fun getResumeLocator(json: Json, crossinline getFile: (String) -> File): ResumeLocator {
     return ResumeLocator { path ->
-        val templateUrl = ResumeLocator::class.java.classLoader.getResource(path)
-        val template = if (templateUrl != null) {
-            val absPath = templateUrl.toURI().toPath().toAbsolutePath().toString()
-            getFile(absPath)
-        } else {
-            getFile(path)
-        }
-        json.decodeFromString(template.readText())
+        val resume = getFile(path)
+        json.decodeFromString(resume.readText())
     }
 }
 
