@@ -33,11 +33,11 @@ fun generateResume(
         }
     }
 
-    return getResumeList(resume, params.language, resumeLocator).asSequence().map { resume ->
-        logger.info { "Generating resumes for languages: ${resume.language.name}" }
-        val htmlContent = templateRenderer.render(params.template, resume)
+    return getResumeList(resume, params.language, resumeLocator).asSequence().map {
+        logger.info { "Generating resumes for languages: ${it.language.name}" }
+        val htmlContent = templateRenderer.render(params.template, it)
         pdfConverter.convert(
-            htmlContent, "${params.outDir}/${resume.language.name}.pdf"
+            htmlContent, "${params.outDir}/${it.language.name}.pdf"
         )
     }
 }

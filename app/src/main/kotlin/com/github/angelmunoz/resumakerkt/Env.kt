@@ -10,12 +10,14 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.pebbletemplates.pebble.PebbleEngine
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.jsoup.Jsoup
 import org.jsoup.helper.W3CDom
 import org.kodein.di.*
 import java.nio.file.Path
 
+@OptIn(ExperimentalSerializationApi::class)
 fun getAppEnv(): DI {
     return DI {
         bindInstance<Json> {

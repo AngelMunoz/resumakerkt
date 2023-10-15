@@ -1,6 +1,5 @@
 package com.github.angelmunoz.resumakerkt.types
 
-import io.github.oshai.kotlinlogging.KLogger
 import kotlinx.serialization.Serializable
 
 @Serializable
