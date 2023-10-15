@@ -1,0 +1,50 @@
+[
+    {
+        "language": {
+            "name": "en-US",
+            "keywords": [
+                "dev",
+                "kotlin",
+                "javascript",
+                "stuff"
+            ]
+        },
+        "profile": {
+            "name": "Tuna",
+            "lastName": "Xor",
+            "pitch": "This is somewhat a tl;dr",
+            "email": "emailor@dudzor.mail"
+        },
+        "skills": [
+            {
+                "name": "Kotlin",
+                "experience": "two years of kotlin dev"
+            },
+            {
+                "name": "Javascript",
+                "experience": "8 years of this torment"
+            }
+        ],
+        "jobs": [
+            {
+                "employer": "Company 1",
+                "position": "developer",
+                "startDate": "1 nov 2015",
+                "endDate": "2 nov 2016",
+                "description": "did stuff"
+            },
+            {
+                "employer": "Company 2",
+                "position": "developer",
+                "description": "did stuff"
+            },
+            {
+                "employer": "Current Company",
+                "position": "developer",
+                "startDate": "15 nov 2017",
+                "endDate": "current",
+                "description": "did stuff"
+            }
+        ]
+    }
+]
