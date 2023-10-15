@@ -8,8 +8,8 @@
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     kotlin("jvm") version "1.9.0"
-    kotlin("plugin.serialization") version "1.9.0"
     kotlin("kapt") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.0"
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
@@ -32,6 +32,9 @@ dependencies {
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
     // added by me
+
+    // Dependency Injection
+    implementation("org.kodein.di:kodein-di:7.19.0")
 
     // Coroutines because why not?
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")

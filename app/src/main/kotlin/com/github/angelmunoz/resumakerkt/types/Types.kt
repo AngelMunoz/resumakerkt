@@ -66,11 +66,3 @@ fun interface TemplateRenderer {
 fun interface PdfConverter {
     fun convert(html: String, outPath: String): String
 }
-
-interface ApplicationEnvironment {
-    val resumeLocator: ResumeLocator
-    val templateRenderer: TemplateRenderer
-    val asyncResumeLocator: AsyncResumeLocator
-    val pdfConverter: PdfConverter
-    fun <TLogOwner> getLogger(cls: Class<TLogOwner>): KLogger
-}

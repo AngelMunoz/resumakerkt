@@ -28,40 +28,7 @@ import kotlin.system.exitProcess
 fun main(vararg argv: String) {
 
     // The App Environment is the DI container for the application
-    val appEnv = object : ApplicationEnvironment {
-        val json = Json {
-            isLenient = true
-            ignoreUnknownKeys = true
-            explicitNulls = false
-        }
-
-        val engine = PebbleEngine.Builder().build()
-
-        override val resumeLocator: ResumeLocator
-            get() = getResumeLocator(json) { path ->
-                val cwd = System.getProperty("user.dir")
-                Path.of(cwd, path).toAbsolutePath().toFile()
-            }
-        override val templateRenderer: TemplateRenderer
-            get() = getTemplateRenderer(engine, json)
-        override val asyncResumeLocator: AsyncResumeLocator
-            get() = TODO("Not yet implemented")
-        override val pdfConverter: PdfConverter
-            get() = getPdfConverter(
-                    { path ->
-                        val cwd = System.getProperty("user.dir")
-                        val file = Path.of(cwd, path).toAbsolutePath().toFile()
-                        file.parentFile.mkdirs()
-                        file
-                    },
-                    { html -> Jsoup.parse(html).let { doc -> W3CDom().fromJsoup(doc) } },
-                    { doc, os ->
-                        PdfRendererBuilder().withW3cDocument(doc, "/").toStream(os).run()
-                    }
-            )
-
-        override fun <TEnclosingCls> getLogger(cls: Class<TEnclosingCls>): KLogger = KotlinLogging.logger(cls.name)
-    }
+    val appEnv = getAppEnv()
     val mainCmd = Resumaker(appEnv, ::generateResume)
 
     exitProcess(CommandLine(mainCmd).execute(*argv))

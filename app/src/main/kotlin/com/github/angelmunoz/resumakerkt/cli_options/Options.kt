@@ -12,15 +12,20 @@
 package com.github.angelmunoz.resumakerkt.cli_options
 
 import com.github.angelmunoz.resumakerkt.handlers.ResumeGenerator
-import com.github.angelmunoz.resumakerkt.types.ApplicationEnvironment
-import com.github.angelmunoz.resumakerkt.types.GenerateParams
+import com.github.angelmunoz.resumakerkt.types.*
+import io.github.oshai.kotlinlogging.KLogger
 import kotlinx.coroutines.Runnable
+import org.kodein.di.DI
+import org.kodein.di.factory
+import org.kodein.di.instance
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 
 @Command(name = "resumaker")
-class Resumaker(private val env: ApplicationEnvironment, private val generator: ResumeGenerator) : Runnable {
+class Resumaker(private val env: DI, private val generator: ResumeGenerator) : Runnable {
+
+    private val getLoger: (String) -> KLogger by env.factory<String, KLogger>()
 
     @Parameters(description = ["The Json file where your resume is stored"])
     lateinit var resume: String
@@ -44,9 +49,13 @@ class Resumaker(private val env: ApplicationEnvironment, private val generator: 
     var languages: List<String> = emptyList()
 
     override fun run() {
-        val logger = env.getLogger(this.javaClass)
+        val logger = getLoger(this.javaClass.name)
+        val resumeLocator: ResumeLocator by env.instance()
+        val templateRenderer: TemplateRenderer by env.instance()
+        val pdfConverter: PdfConverter by env.instance()
+
         logger.info { "Generating pdf files from '$resume'" }
-        val paths = generator(env.resumeLocator, env.templateRenderer, env.pdfConverter, resume, GenerateParams(outDir, template, languages)).toList()
+        val paths = generator(logger, resumeLocator, templateRenderer, pdfConverter, resume, GenerateParams(outDir, template, languages)).toList()
         logger.info { "Generated ${paths.size} PDF Files" }
     }
 }

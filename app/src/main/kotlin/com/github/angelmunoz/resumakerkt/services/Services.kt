@@ -8,26 +8,26 @@ package com.github.angelmunoz.resumakerkt.services
 import com.github.angelmunoz.resumakerkt.types.PdfConverter
 import com.github.angelmunoz.resumakerkt.types.ResumeLocator
 import com.github.angelmunoz.resumakerkt.types.TemplateRenderer
-import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import io.pebbletemplates.pebble.PebbleEngine
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
-import org.jsoup.Jsoup
-import org.jsoup.helper.W3CDom
 import org.w3c.dom.Document
 import java.io.File
 import java.io.OutputStream
 import java.io.StringWriter
-import kotlin.io.path.Path
-import kotlin.io.path.toPath
 
 
-fun getTemplateRenderer(engine: PebbleEngine, json: Json): TemplateRenderer {
+fun getTemplateRenderer(engine: PebbleEngine, json: Json, getUserlandTemplate: (String) -> File): TemplateRenderer {
     return TemplateRenderer { templateNameOrPath, resume ->
         StringWriter().use { writer ->
-            val template = engine.getTemplate("templates/$templateNameOrPath")
+            val template =
+                if (templateNameOrPath.startsWith(".") && templateNameOrPath.endsWith(".html")) {
+                    val file = getUserlandTemplate(templateNameOrPath).absolutePath
+                    engine.getTemplate(file)
+                } else {
+                    engine.getTemplate("templates/$templateNameOrPath")
+                }
 
             val payload = json.encodeToJsonElement(resume).jsonObject.toMap()
 
@@ -45,9 +45,9 @@ inline fun getResumeLocator(json: Json, crossinline getFile: (String) -> File): 
 }
 
 inline fun getPdfConverter(
-        crossinline getFile: (String) -> File,
-        crossinline getDocument: (String) -> Document,
-        crossinline renderPdf: (Document, OutputStream) -> Unit,
+    crossinline getFile: (String) -> File,
+    crossinline getDocument: (String) -> Document,
+    crossinline renderPdf: (Document, OutputStream) -> Unit,
 ): PdfConverter {
     return PdfConverter { html, outPath ->
         val file = getFile(outPath)

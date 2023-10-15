@@ -9,31 +9,37 @@
 package com.github.angelmunoz.resumakerkt.handlers
 
 import com.github.angelmunoz.resumakerkt.types.*
+import io.github.oshai.kotlinlogging.KLogger
 
 
 fun generateResume(
-        resumeLocator: ResumeLocator,
-        templateRenderer: TemplateRenderer,
-        pdfConverter: PdfConverter,
-        resume: String,
-        params: GenerateParams
+    logger: KLogger,
+    resumeLocator: ResumeLocator,
+    templateRenderer: TemplateRenderer,
+    pdfConverter: PdfConverter,
+    resume: String,
+    params: GenerateParams
 ): Sequence<String> {
 
     fun getResumeList(path: String, language: List<String>, resumeLocator: ResumeLocator): List<Resume> {
         val resumeList = resumeLocator.getResume(path)
-        return if (language.isEmpty()) resumeList else
+        return if (language.isEmpty()) {
+            logger.info { "No language provided, generating all available languages." }
+            resumeList
+        } else {
             resumeList.filter { resume ->
                 language.contains(resume.language.name)
             }
+        }
     }
 
     return getResumeList(resume, params.language, resumeLocator).asSequence().map { resume ->
-
+        logger.info { "Generating resumes for languages: ${resume.language.name}" }
         val htmlContent = templateRenderer.render(params.template, resume)
         pdfConverter.convert(
-                htmlContent, "${params.outDir}/${resume.language.name}.pdf"
+            htmlContent, "${params.outDir}/${resume.language.name}.pdf"
         )
     }
 }
 
-typealias ResumeGenerator = (ResumeLocator, TemplateRenderer, PdfConverter, String, GenerateParams) -> Sequence<String>
+typealias ResumeGenerator = (KLogger, ResumeLocator, TemplateRenderer, PdfConverter, String, GenerateParams) -> Sequence<String>
