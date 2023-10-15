@@ -7,7 +7,8 @@
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.8.20"
+    kotlin("jvm") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.0"
     kotlin("kapt") version "1.9.0"
 
     // Apply the application plugin to add support for building a CLI application in Java.
@@ -52,6 +53,12 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.11")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
 
+    // JSON parsing
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0-RC")
+
+    // Template engine
+    implementation("io.pebbletemplates:pebble:3.2.1")
+
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -69,7 +76,7 @@ kapt {
 
 application {
     // Define the main class for the application.
-    mainClass.set("com.github.angelmunoz.AppKt")
+    mainClass.set("com.github.angelmunoz.resumakerkt.AppKt")
 }
 
 tasks.named<Test>("test") {
