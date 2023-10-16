@@ -13,8 +13,7 @@ import kotlin.system.exitProcess
 fun main(vararg argv: String) {
 
     // The App Environment is the DI container for the application
-    val appEnv = getAppEnv()
-    val mainCmd = Resumaker(appEnv, ::generateResume)
+    val mainCmd = Resumaker(::getAppEnv, ::generateResume)
 
     exitProcess(CommandLine(mainCmd).execute(*argv))
 }
