@@ -1,6 +1,10 @@
 package com.github.angelmunoz.resumakerkt.types
 
+import arrow.core.Either
 import kotlinx.serialization.Serializable
+import org.w3c.dom.Document
+import java.io.File
+import java.io.OutputStream
 
 @Serializable
 data class Project(
@@ -47,21 +51,42 @@ data class Resume(
         val socialMedia: List<Link>?
 )
 
+enum class LogLevel {
+    Debug,
+    Trace,
+    Info
+}
 
 data class GenerateParams(val outDir: String, val template: String, val language: List<String>)
 
-fun interface ResumeLocator {
-    fun getResume(path: String): List<Resume>
-}
+@JvmInline
+value class ResumeError(val error: String)
 
-fun interface AsyncResumeLocator {
-    suspend fun getResume(path: String): List<Resume>
+@JvmInline
+value class PdfConvertError(val error: String)
+
+@JvmInline
+value class TemplateRenderingError(val error: String)
+
+@JvmInline
+value class FileLocatorError(val error: String)
+
+fun interface ResumeLocator {
+    fun getResume(path: String): Either<ResumeError, List<Resume>>
 }
 
 fun interface TemplateRenderer {
-    fun render(templateNameOrPath: String, payload: Resume): String
+    fun render(templateNameOrPath: String, payload: Resume): Either<TemplateRenderingError, String>
 }
 
 fun interface PdfConverter {
-    fun convert(html: String, outPath: String): String
+    fun convert(html: String, outPath: String): Either<PdfConvertError, String>
+}
+
+fun interface DocumentParser {
+    fun parse(html: String): Either<String, Document>
+}
+
+fun interface FileLocator {
+    fun find(path: String, ensureParent: Boolean): Either<FileLocatorError, File>
 }

@@ -8,38 +8,55 @@
  */
 package com.github.angelmunoz.resumakerkt.handlers
 
+import arrow.core.*
 import com.github.angelmunoz.resumakerkt.types.*
 import io.github.oshai.kotlinlogging.KLogger
 
 
 fun generateResume(
-    logger: KLogger,
-    resumeLocator: ResumeLocator,
-    templateRenderer: TemplateRenderer,
-    pdfConverter: PdfConverter,
-    resume: String,
-    params: GenerateParams
-): Sequence<String> {
+        logger: KLogger,
+        resumeLocator: ResumeLocator,
+        templateRenderer: TemplateRenderer,
+        pdfConverter: PdfConverter,
+        resumePath: String,
+        params: GenerateParams
+) {
+    val (outDir, template, language)  = params
 
-    fun getResumeList(path: String, language: List<String>, resumeLocator: ResumeLocator): List<Resume> {
-        val resumeList = resumeLocator.getResume(path)
-        return if (language.isEmpty()) {
-            logger.info { "No language provided, generating all available languages." }
-            resumeList
-        } else {
-            resumeList.filter { resume ->
-                language.contains(resume.language.name)
+    val resumeList = resumeLocator
+        .getResume(resumePath)
+        .mapLeft { it.error }
+        .getOrElse { emptyList() }
+
+    val filtered =
+            if (language.isEmpty()) {
+                logger.info { "No language provided, generating all available languages." }
+                resumeList
+            } else {
+                resumeList.filter { resume ->
+                    language.contains(resume.language.name)
+                }
             }
+    for (resume in filtered) {
+        logger.info { "Generating resumes for languages: ${resume.language.name}" }
+        val renderResult =
+            templateRenderer
+                .render(template, resume)
+                .mapLeft { it.error }
+                .flatMap { htmlContent ->
+                    pdfConverter.convert(
+                        htmlContent, "${outDir}/${resume.language.name}.pdf"
+                    )
+                        .mapLeft { it.error }
+                }
+        when(renderResult) {
+            is Either.Right -> logger.info { "Generated PDF at: '${renderResult.value}" }
+            is Either.Left -> logger.error { "Unable to generate PDF: ${renderResult.leftOrNull()}" }
         }
     }
 
-    return getResumeList(resume, params.language, resumeLocator).asSequence().map {
-        logger.info { "Generating resumes for languages: ${it.language.name}" }
-        val htmlContent = templateRenderer.render(params.template, it)
-        pdfConverter.convert(
-            htmlContent, "${params.outDir}/${it.language.name}.pdf"
-        )
-    }
+    logger.info { "Generated '${filtered.size}' PDF files." }
+
 }
 
-typealias ResumeGenerator = (KLogger, ResumeLocator, TemplateRenderer, PdfConverter, String, GenerateParams) -> Sequence<String>
+typealias ResumeGenerator = (KLogger, ResumeLocator, TemplateRenderer, PdfConverter, String, GenerateParams) -> Unit
