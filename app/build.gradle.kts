@@ -51,6 +51,7 @@ dependencies {
     val ohpVersion = "1.0.10"
     implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:$ohpVersion")
     implementation("com.openhtmltopdf:openhtmltopdf-core:$ohpVersion")
+    implementation("com.openhtmltopdf:openhtmltopdf-slf4j:$ohpVersion")
 
     // logging stuff
     implementation("ch.qos.logback:logback-classic:1.4.11")
