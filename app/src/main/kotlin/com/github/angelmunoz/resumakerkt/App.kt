@@ -5,15 +5,14 @@
 package com.github.angelmunoz.resumakerkt
 
 import com.github.angelmunoz.resumakerkt.cli_options.Resumaker
-import com.github.angelmunoz.resumakerkt.handlers.generateResume
 import picocli.CommandLine
 import kotlin.system.exitProcess
 
 
 fun main(vararg argv: String) {
 
-    // The App Environment is the DI container for the application
-    val mainCmd = Resumaker(::getAppEnv, ::generateResume)
+  // The App Environment is the DI container for the application
+  val mainCmd = Resumaker(::getApplicationEnvironment)
 
-    exitProcess(CommandLine(mainCmd).execute(*argv))
+  exitProcess(CommandLine(mainCmd).execute(*argv))
 }
