@@ -1,20 +1,20 @@
 [picocli]: https://picocli.info/
 [kotlin]: https://kotlinlang.org/
 
-# A simple skeleton CLI
+# ResumakerKT
 
 I made this sample github repo to show how to make a simple CLI using [kotlin] and [picocli].
 
-It includes an `ApplicationEnvironment` (Manual DI Container), an action handler, and a single command with some CLI options
+This is a small CLI application that takes a JSON file with a specific format and turns it into a PDF file using a default HTML template.
 
-The main idea is to provide multiple handlers as part of a transformation pipeline to get to the final result, each handler also has to be provided of required arguments (as data classes) and services (that are hosted in the `ApplicationEnvironment`)
+The part where I make the shiny and cool template for the resume is currently missing, because it is the least exciting (for me) thing to do 😆.
 
-This allows the handlers to be tested in isolation, and the application to be tested as a whole.
+The rest of the software should be working as expected.
 
 ## Run
 
 ```bash
-./gradlew run --args="-p ./"
+./gradlew run --args="./sample.json"
 ```
 
 ## Tests
@@ -23,13 +23,4 @@ This allows the handlers to be tested in isolation, and the application to be te
 ./gradlew test
 ```
 
-The tests are composed of two different kind of tests.
-
-1. Unit tests for the handlers
-2. Integration tests for the application
-
-The handlers are unit tested by providing them with a fake service and a specific set of parameters to control the result of the operation.
-
-The integration tests are done by running the CLI Command in question with a fake `ApplicationEnvironment` with a set of specific arguments.
-
-Since CLI applications are often working with stdin/stdout, to ease testing your outputs you should provide a logger interface so you can fake it in your tests and corroborate that what you're logging to the console is what you actually want.
+There are no tests yet, feel free to contribute them if you're feeling generous 😌.
