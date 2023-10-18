@@ -11,55 +11,44 @@
  */
 package com.github.angelmunoz.resumakerkt.cli_options
 
-import com.github.angelmunoz.resumakerkt.handlers.ResumeGenerator
 import com.github.angelmunoz.resumakerkt.types.*
 import io.github.oshai.kotlinlogging.KLogger
 import kotlinx.coroutines.Runnable
 import org.kodein.di.DI
 import org.kodein.di.instance
-import picocli.CommandLine.Command
-import picocli.CommandLine.Option
-import picocli.CommandLine.Parameters
+import picocli.CommandLine.*
 
 @Command(name = "resumaker")
-class Resumaker(private val getEnv: (LogLevel) -> DI, private val generator: ResumeGenerator) : Runnable {
+class Resumaker(private val getEnv: (LogLevel) -> DI) : Runnable {
 
 
-    @Parameters(description = ["The Json file where your resume is stored"])
-    lateinit var resume: String
+  @Parameters(description = ["The Json file where your resume is stored"])
+  lateinit var resume: String
 
-    @Option(
-            names = ["-o", "--outDir"],
-            description = ["Generate a resume from a template"]
-    )
-    var outDir = "./generated"
+  @Option(
+    names = ["-o", "--outDir"], description = ["Generate a resume from a template"]
+  )
+  var outDir = "./generated"
 
-    @Option(
-            names = ["-t", "--template"],
-            description = ["The template to use"]
-    )
-    var template = "default.html"
+  @Option(
+    names = ["-t", "--template"], description = ["The template to use"]
+  )
+  var template = "default.html"
 
-    @Option(
-            names = ["-l", "--language"],
-            description = ["The language to use, if not specified it will generate all of the available languages"]
-    )
-    var languages: List<String> = emptyList()
+  @Option(
+    names = ["-l", "--language"],
+    description = ["The language to use, if not specified it will generate all of the available languages"]
+  )
+  var languages: List<String> = emptyList()
 
-    @Option(
-            names = ["--log-level"],
-            description = ["Log level Valid values: \${COMPLETION-CANDIDATES}, defaults to 'Info'"]
-    )
-    var logLevel: LogLevel = LogLevel.Info
+  @Option(
+    names = ["--log-level"], description = ["Log level Valid values: \${COMPLETION-CANDIDATES}, defaults to 'Info'"]
+  )
+  var logLevel: LogLevel = LogLevel.Info
 
-    override fun run() {
-        val env = getEnv(logLevel)
-        val logger: KLogger by env.instance<KLogger>()
-        val resumeLocator: ResumeLocator by env.instance()
-        val templateRenderer: TemplateRenderer by env.instance()
-        val pdfConverter: PdfConverter by env.instance()
-
-        logger.info { "Generating pdf files from '$resume'" }
-        generator(logger, resumeLocator, templateRenderer, pdfConverter, resume, GenerateParams(outDir, template, languages))
-    }
+  override fun run() {
+    val env = getEnv(logLevel)
+    val resumeGenerator: IResumeGenerator by env.instance()
+    resumeGenerator.generate(resume, outDir, template, languages)
+  }
 }
