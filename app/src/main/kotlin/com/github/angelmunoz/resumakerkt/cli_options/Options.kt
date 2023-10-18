@@ -12,7 +12,6 @@
 package com.github.angelmunoz.resumakerkt.cli_options
 
 import com.github.angelmunoz.resumakerkt.types.*
-import io.github.oshai.kotlinlogging.KLogger
 import kotlinx.coroutines.Runnable
 import org.kodein.di.DI
 import org.kodein.di.instance
