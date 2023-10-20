@@ -69,9 +69,8 @@ fun getTemplateRenderer(
       either {
         val template = locateResumeTemplate(logger, fileLocator, engine, templateNameOrPath).bind()
 
-        val payload = json.encodeToJsonElement(resume).jsonObject.toMap()
         try {
-          template.evaluate(writer, payload)
+          template.evaluate(writer, mapOf("resume" to resume))
         } catch (error: Error) {
           logger.trace(error) { "Attempted to evaluate and failed with $resume" }
           raise(TemplateRenderingError(error.message ?: "Failed to evaluate the template"))
