@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{resume.language.name}}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -8,6 +8,29 @@
     <title>Document</title>
 </head>
 <body>
-<h1>empty thing</h1>
+<article>
+    <header>
+        <h1>{{resume.profile.name}} {{resume.profile.lastName}}</h1>
+        <h2>{{resume.profile.email}}</h2>
+        <blockquote>{{resume.profile.pitch}}</blockquote>
+    </header>
+    <aside>
+        <ul>
+            {% for keyword in resume.language.keywords %}
+            <li>{{ keyword }}</li>
+            {% endfor %}
+        </ul>
+    </aside>
+    <aside>
+        <ul>
+            {% for skill in resume.skills %}
+            <li>
+                <h3>{{skill.name}}</h3>
+                <blockquote>{{skill.experience}}</blockquote>
+            </li>
+            {% endfor %}
+        </ul>
+    </aside>
+</article>
 </body>
 </html>
